@@ -16,6 +16,7 @@ class game:
     self.stand = False
     self.win = False
     self.hitV = True
+    self.splitCards = False
     self.playerinput()
   def __init__(self,debug=False):
     if debug == False:
@@ -48,7 +49,9 @@ class game:
       return(hand)
   def play(self):
     self.comphand = self.gethand()
+    #self.comphand = ['3 of Hearts', '3 of Clubs']
     self.humanhand = self.gethand()
+    #self.humanhand = ['6 of Spades', '7 of Spades']
     while True:
       try:
         self.bet = int(input("How much do you want to bet?: "))
@@ -60,7 +63,8 @@ class game:
       playerin = input(f"Your hand is {self.humanhand}, the Dealer's shown card is the {self.comphand[1]}\nWhat do you want to do? (Stand, Hit or Split): ").lower()
       if playerin == "split":
        self.split()
-    else:
+        
+    if True:
       while self.bust == False:
         self.playerturn()
       if self.win == True:
@@ -76,11 +80,14 @@ class game:
             print(f"You win! You won {self.bet * 2}, The computer's hand was the {self.comphand[0]} and the {self.comphand[1]}")
             self.reset()
           else:
-            print(f"You lose!Goffy You lost {self.bet}, The computer's hand was the {self.comphand[0]} and the {self.comphand[1]}")
+            print(f"You lose! You lost {self.bet}, The computer's hand was {self.comphand} with value of {self.getvalue(self.humanhand, self.comphand)[1]}, Lose condition computer higher")
             self.reset()
         elif score[1] == 21:
-          print(f"HA you loser, You lost {self.bet}, The computer's hand was the {self.comphand[0]} and the {self.comphand[1]}")
+          print(f"You lost {self.bet}, The computer's hand was the {self.comphand[0]} and the {self.comphand[1]}, meaning they got BlackJack")
           self.reset()
+        else:
+            print(f"You win! You won {self.bet * 2}, The computer's hand was {self.comphand}, With a value of {self.getvalue(self.humanhand, self.comphand)[1]} meaing they busted  ")
+
       else:
         print(f"You bust! You lost {self.bet}, Your hand was {self.humanhand} with value {self.getvalue(self.humanhand)}, The computer's hand was the {self.comphand[0]} and the {self.comphand[1]}")
         self.reset()
@@ -123,10 +130,10 @@ class game:
     
     
   def comphit(self):
-    self.comphand += self.gethand(1)#FINISH, calling for human? Dont know why I wrote this, Its calling for the computer?
+    self.comphand += self.gethand(1)#Finish, calling for human. Dont know why I wrote this, Its calling for the computer?
     
   def compturn(self):
-    x = self.getvalue(self.humanhand,self.comphand)[1]
+    #x = self.getvalue(self.humanhand,self.comphand)[1]
     if self.getvalue(self.humanhand,self.comphand)[1] < 16:
       self.comphit()
     else:
@@ -164,31 +171,37 @@ class game:
         return sum(humanvalue)-10
       else:
         return sum(humanvalue)
-  def split(self):
+  def split(self): #I dont even want to think about this
+    self.bet *= 2
     humanhand1 = [self.humanhand[0]]
     humanhand2 = [self.humanhand[1]]
-    playerin = input(f"Your hand is the {humanhand1} and the {humanhand2}, the Dealer's shown card is the {self.comphand[1]}\nWhat do you want to do? (Stand, Hit or Split), to hit on a certain card enter 'hit left' or 'hit right': ").lower()
-    if playerin == 'hit left':
-      pass
+    while self.splitCards == True:
+      if self.getvalue(humanhand1) != 21 and self.getvalue(humanhand2) != 21:
+        playerin = input(f"Your first hand is: {humanhand1} and the second hand is: {humanhand2}, the Dealer's shown card is the {self.comphand[1]}\nWhat do you want to do? (Stand, Hit or Split), to hit on a certain card enter 'hit left' or 'hit right': ").lower()
+        if playerin == 'hit left':
+          if self.getvalue(humanhand1) < 21:
+            humanhand1 += self.gethand(1)
+          elif self.getvalue(humanhand1) == 21:
+            print("You have gotten blackjack on this hand already.")
+          else:
+            print("That hand has busted. You have lost the hand.")
+        elif playerin == "hit right":
+          if self.getvalue(humanhand2) < 21:
+            humanhand2 += self.gethand(1)
+          elif self.getvalue(humanhand2) == 21:
+            print("You have gotten blackjack on this hand already.")
           
+          else:
+            print("That hand has busted. You have lost the hand.")
+        
+        elif playerin == "stand":
+          self.bust = True
+      elif self.getvalue(humanhand1) == 21 and self.getvalue(humanhand2) == 21:
+        print(f"You got blackjack on both hands! You won {self.bet * 2}. Your hands were {humanhand1}, and {humanhand2}. The computer's hand was {self.comphand}")
+        
 
 # This is the only command allowed that is not in the class template. All code must be done there.
 
 g = game(debug=False)
-print(g.getvalue(['Ace of Hearts', 'Jack of Clubs', '3 of Hearts'], ['Ace of Hearts', 'Jack of Clubs']))
-'''DOnt Need
-    if "Ace" in human and humanvalue > 21:
-      valuesH['Ace'] = 1
-      self.getvalue(self.humanhand, self.comphand)    
-    if "Ace" in human and humanvalue > 21:
-      valuesH['Ace'] = 1
-      self.getvalue(self.humanhand, self.comphand) 
-'''
-'''
-            humancard1 = human[0].split('of')
-            humancard2 = human[1].split('of')
-            compcard1 = comp[0].split('of')
-            compcard2 = comp[1].split('of')
-            humanvalue = valuesH[humancard1[0]] + valuesH[humancard2[0]]
-            compvalue = valuesC[compcard1[0]] + valuesC[compcard2[0]]
-'''
+print(g.getvalue(['Queen of Hearts', '7 of Clubs'], ['3 of Hearts', '3 of Clubs']))
+#g.play()
