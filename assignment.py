@@ -100,7 +100,7 @@ class game:
       while self.hitTrue == True:
         if self.getvalue(self.humanhand) < 21:
           self.hit()
-        elif self.getvalue(self.humanhand) == 21:
+        if self.getvalue(self.humanhand) == 21:
           self.win = True
           self.bust = True
           break
