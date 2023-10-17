@@ -16,7 +16,7 @@ class game:
     def __init__(self) -> None:
         self.bets()
         #self.roll()
-        #self.play()
+        self.play()
     def bets(self):
         bet = input("Enter what bet you will do, The options are: Pass line, Dont pass line or No bet: ").lower()
         while True:
@@ -28,8 +28,30 @@ class game:
         rolls = self.startroll()
         
         print(f"The rolls are {rolls['dice1']}, {rolls['dice2']}, Totaling {rolls['total']}")
-        if rolls['total'] == 7 or rolls["total"] == 11:
-           pass 
+        while True:
+            if rolls['total'] == 7 or rolls["total"] == 11 or rolls["total"] == 2 or rolls["total"] == 3 or rolls["total"] == 12:
+                break
+            rolls = self.startroll()
+            
+            print(f"The rolls are {rolls['dice1']}, {rolls['dice2']}, Totaling {rolls['total']}")
+
+        if bet == "pass line":
+            if rolls["total"] == 7 or rolls["total"] == 11:
+                print(f"You win the first round! You won {self.betamount * 2}")
+            elif rolls["total"] == 2 or rolls["total"] == 3 or rolls["total"] == 12:
+                print(f"You lost the first round. You lost {self.betamount}")
+        elif bet == "dont pass line":
+            if rolls["total"] == 7 or rolls["total"] == 11:
+                print(f"You lost the first round. You lose {self.betamount}")
+            elif rolls["total"] == 2 or rolls["total"] == 3:
+                print(f"You win the first round! You win {self.betamount * 2}")
+            elif rolls["total"] == 12:
+                print(f"Tie! You win back {self.betamount}")
+        #Time to go to the main game;
+    def play(self):
+        
+
+
     def startroll(self):
         d1 = random.randint(1,6)
         d2 = random.randint(1,6)
