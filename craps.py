@@ -203,6 +203,75 @@ class game:
             elif rolls['total'] == 3:
                 if call == "ace-deuce" or call == "ace deuce":
                     print("You win")
+    def hardbet(self):
+        #Hardaways
+        #A Hardway bet is not a one-roll bet. 
+        #You are betting that the shooter rolls a pair.
+        #Hardways win if the dice roll as a pair and lose if a 7 rolls or if the number is thrown “the easy way.” 
+        #Example: If you bet a hard 8 and thedice roll 4,4 you win. If the dice roll “easy” 5,3 or 6,2 you lose.
+        #Hard Four or Ten 	pays 8 for 1
+        #Hard Six or Eight 	pays 10 for 1   
+        while True:
+            betNum = str(input("Enter what number you will bet on: Hard 8, Hard 6, Hard 10 or Hard 4?: ")).lower()
+            if betNum == "hard 8" or betNum == "hard 10" or betNum == "hard 6" or betNum == "hard 4":
+                break
+            else:
+                print("Enter one of the options.")
+        while True:
+            try:
+                self.betamount = int(input("Enter how much you will bet: "))
+                break
+            except:
+                print("Enter a valid integer")
+                
+        x = int(betNum.split(" ")[1])
+        easy = False
+        rolls = self.startroll()
+        while True:
+            
+            if rolls['dice1'] == rolls["dice2"]:
+                break
+                #elif rolls["total"] == 4 or rolls["total"] == 8 or rolls["total"] == 10 or rolls["total"] == 6: Doesnt work. In hindsight WHY WOULD THIS WORK???
+                
+            elif rolls["total"] == int(betNum.split(" ")[1]):
+                easy = True
+                break
+            print(f"The roll is {rolls['dice1'],rolls['dice2']} totaling {rolls['total']}")
+            rolls = self.startroll()
+        if easy == True:
+            print(f"You lose {self.betamount}, from {rolls['dice1'],rolls['dice2']} totaling {rolls['total']}")
+        elif rolls["total"] == 4 or rolls["total"] == 10:
+            if betNum == "hard 4" or betNum == "hard 10":
+                print(f"You win {self.betamount * 8}, from {rolls['dice1'],rolls['dice2']} totaling {rolls['total']}")
+        elif rolls["total"] == 6 or rolls["total"] == 8:
+            if betNum == "hard 8" or betNum == "hard 6":
+                print(f"You win {self.betamount * 10}, from {rolls['dice1'],rolls['dice2']} totaling {rolls['total']}")
+    def hopbet(self):
+        #Hop Bets are a one roll bet on a specific combination of the dice. 
+        #You are literally betting on what you think the very next roll of the dice will be.
+        #If you think the next roll is going to be a (6, 3), you would tell the dealer that you want the 6 and 3 hopping. 
+        #Hop bets pay 31 for 1 or 16 for 1 depending on the combination that you choose.
+        while True:
+            try:
+                betCombo = str(input("Enter what combination of two numbers you will bet on. Enter in the format: num1,num2 <- Seperate with comma; "))
+                combo = betCombo.split(",")
+                if len(combo) == 2 and int(combo[0]) > 0 and int(combo[0]) < 7  and int(combo[1]) > 0 and int(combo[1]) < 7:
+                    break
+            except:
+                print("Enter in the valid format: num,num. Make sure that both numbers can be rolled by 1d6")
+        while True:
+            try:
+                self.betamount = int(input("Enter how much you will bet: "))
+                break
+            except:
+                print("Enter a valid integer")
+        rolls = self.startroll()
+        x = float(betCombo[1])
+        combolistPlayer = [int(betCombo[0]), int(betCombo[1])]
+        combolistComp = [int(rolls["dice1"]), int(rolls["dice2"])]
+        print(combolistComp, combolistPlayer)
+
+
     
     def startroll(self):
         d1 = random.randint(1,6)
